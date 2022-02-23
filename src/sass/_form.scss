@@ -1,0 +1,45 @@
+.search-form {
+  height: 60px;
+  background: rgb(154, 21, 172);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+form > input {
+  height: 40px;
+  width: 250px;
+  font-size: 16px;
+  border-radius: 4px 0px 0px 4px;
+  border-right: none;
+  border-color: black;
+}
+
+form > button {
+  height: 40px;
+  border-left: none;
+  border-radius: 0px 4px 4px 0px;
+  border-color: rgb(0, 0, 0);
+}
+
+form > button:active {
+  background: rgb(241, 185, 243);
+}
+
+a {
+  text-decoration: none;
+}
+
+.load-more {
+  margin: 0 auto;
+  width: 200px;
+  height: 60px;
+  background-color: rgb(154, 21, 172);
+  color: white;
+  font-size: 26px;
+  border-radius: 4px 4px 4px 4px;
+  text-shadow: 2px 2px 4px #d3c2c2;
+  box-shadow: 2px 4px 4px #7a7979;
+  cursor: pointer;
+  display: none;
+}
