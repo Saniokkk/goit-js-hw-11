@@ -35,18 +35,21 @@ async function searchImages(event) {
     galleryRefs.innerHTML = '';
     page = 1;
     currentSearchValue = formRefs.searchQuery.value.trim();
+    loadMoreBtn.style.display = 'none';
 
-    if (currentSearchValue.length == 0) {
+    if (currentSearchValue.length === 0) {
         return
     } else {
         const responseServer = await requestServer(currentSearchValue);        
-        const { hits } = responseServer;
+        const { hits, totalHits } = responseServer;
 
         if (hits.length === 0) {
             Notify.failure("Sorry, there are no images matching your search query. Please try again.");
-        }else {
+        } else {
+            Notify.success(`Hooray! We found ${totalHits} images.`);
             const templateOfImages = imagesCards(hits);
             renderCards(templateOfImages);
+            
             galleryModal = new SimpleLightbox('.gallery a', options);
             loadMoreBtn.style.display = 'block';           
         }
@@ -54,8 +57,7 @@ async function searchImages(event) {
     formRefs.reset()
 }
 
-async function loadMoreCards() {
-    
+async function loadMoreCards() {    
     page += 1;
     const responseServer = await requestServer(currentSearchValue, page);
 
@@ -65,8 +67,7 @@ async function loadMoreCards() {
     galleryModal.refresh()
     if (totalHits / 40 < page) {
         loadMoreBtn.style.display = 'none';
-        Notify.info("We're sorry, but you've reached the end of search results.")
-        
-    }
-    
+        Notify.info("We're sorry, but you've reached the end of search results.")        
+    }    
 }
+
