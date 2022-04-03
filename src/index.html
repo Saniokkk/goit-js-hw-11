@@ -17,11 +17,16 @@
     <include src="./partials/form.html"></include>
     <div class="container">
       <div class="gallery"></div>
-      <button type="button" class="load-more">Load more</button>
+      <button type="button" class="scrollToTopBtn">
+        <svg class="arrow__top" width="48" height="48">
+          <use href="./images/icon.svg#icon-top"></use>
+        </svg>
+      </button>
     </div>
     <!-- <include src="./partials/example.html"></include> -->
 
     <!-- Скрипт идёт последним в разметке. В нём уже подключен главный SASS-файл. -->
     <script src="./index.js"></script>
+    <script src="./js/scrollToTop.js"></script>
   </body>
 </html>

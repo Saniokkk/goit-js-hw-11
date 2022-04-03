@@ -4,10 +4,11 @@ import imagesCards from './js/components/imagesCards'
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import SimpleLightbox from "simplelightbox";
 import 'simplelightbox/dist/simple-lightbox.min.css';
+import throttle from 'lodash/throttle';
+
 
 const galleryRefs = document.querySelector('.gallery');
 const formRefs = document.querySelector('#search-form');
-const loadMoreBtn = document.querySelector('.load-more');
 
 let page = 1;
 let currentSearchValue = '';
@@ -17,7 +18,9 @@ const options = {
     captionDelay: 250,  
 }
 
-loadMoreBtn.addEventListener('click', loadMoreCards)
+
+const infiniteScrollThrottle = throttle(infiniteScroll, 500);
+window.addEventListener('scroll', infiniteScrollThrottle);
 formRefs.addEventListener('submit', searchImages)
 
 async function requestServer(searchValue, page) {
@@ -34,8 +37,7 @@ async function searchImages(event) {
     event.preventDefault();
     galleryRefs.innerHTML = '';
     page = 1;
-    currentSearchValue = formRefs.searchQuery.value.trim();
-    loadMoreBtn.style.display = 'none';
+    currentSearchValue = formRefs.searchQuery.value.trim();    
 
     if (currentSearchValue.length === 0) {
         return
@@ -51,23 +53,34 @@ async function searchImages(event) {
             renderCards(templateOfImages);
             
             galleryModal = new SimpleLightbox('.gallery a', options);
-            loadMoreBtn.style.display = 'block';           
+            // loadMoreBtn.style.display = 'block';           
         }
     }
     formRefs.reset()
 }
 
-async function loadMoreCards() {    
-    page += 1;
-    const responseServer = await requestServer(currentSearchValue, page);
 
-    const { totalHits, hits } = responseServer;
-    const templateOfImages = imagesCards(hits);
-    renderCards(templateOfImages);
-    galleryModal.refresh()
-    if (totalHits / 40 < page) {
-        loadMoreBtn.style.display = 'none';
-        Notify.info("We're sorry, but you've reached the end of search results.")        
-    }    
+async function infiniteScroll() {           
+    const contentHeight = galleryRefs.offsetHeight;      
+    const yOffset       = window.pageYOffset;      
+    const window_height = window.innerHeight;      
+    const y             = yOffset + window_height;    
+
+    if (y >= contentHeight) {
+        
+        console.log('scroll')
+        page += 1;
+        const responseServer = await requestServer(currentSearchValue, page);
+
+        const { totalHits, hits } = responseServer;
+        const templateOfImages = imagesCards(hits);
+        renderCards(templateOfImages);
+        galleryModal.refresh()
+
+        if (totalHits / 40 < page) {
+            console.log('finish')
+            window.removeEventListener('scroll', infiniteScrollThrottle);
+            Notify.info("We're sorry, but you've reached the end of search results.")
+        }  
+    }
 }
-
