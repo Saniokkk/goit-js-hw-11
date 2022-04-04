@@ -21,5 +21,7 @@ function scrollToTop() {
         behavior: "smooth"
     });
 }
+
 scrollToTopBtn.addEventListener("click", scrollToTop);
+scrollToTopBtn.addEventListener("touch", scrollToTop);
 document.addEventListener("scroll", handleScroll);
